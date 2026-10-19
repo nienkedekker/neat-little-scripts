@@ -1,0 +1,44 @@
+#!/usr/bin/env swift
+
+// nudges the cursor 1px and back at a fixed interval so the mac never goes
+// idle. skips the nudge if you moved the mouse yourself.
+// usage: jiggle [interval_seconds] [duration_minutes]
+
+import Foundation
+import CoreGraphics
+
+let args = CommandLine.arguments
+let interval = args.count > 1 ? Double(args[1]) ?? 30 : 30
+let durationMin = args.count > 2 ? Double(args[2]) ?? 0 : 0
+let deadline = durationMin > 0 ? Date().addingTimeInterval(durationMin * 60) : Date.distantFuture
+
+func cursor() -> CGPoint {
+    CGEvent(source: nil)?.location ?? .zero
+}
+
+func move(to p: CGPoint) {
+    CGEvent(mouseEventSource: nil, mouseType: .mouseMoved, mouseCursorPosition: p, mouseButton: .left)?
+        .post(tap: .cghidEventTap)
+}
+
+let fmt = DateFormatter()
+fmt.dateFormat = "HH:mm:ss"
+
+print("jiggling every \(Int(interval))s" + (durationMin > 0 ? " for \(Int(durationMin))m" : " until you quit (ctrl-c)"))
+
+var last = cursor()
+
+while Date() < deadline {
+    Thread.sleep(forTimeInterval: interval)
+    let now = cursor()
+    if now != last {
+        // you're actually using the mouse, leave it alone
+        last = now
+        continue
+    }
+    move(to: CGPoint(x: now.x + 1, y: now.y))
+    Thread.sleep(forTimeInterval: 0.05)
+    move(to: now)
+    last = cursor()
+    print("\(fmt.string(from: Date()))  nudge")
+}
