@@ -1,10 +1,6 @@
 # neat little scripts
 
-Small macOS tools I made for myself. Plain Swift, no Xcode project: each app has a
-`build.sh` that compiles it into `~/Applications`. Needs the Xcode command line
-tools (`xcode-select --install`).
+Small Mac tools I wrote for myself. Needs the Xcode command line tools.
 
-- [`jiggle/`](jiggle) — menu bar app that keeps the Mac from going idle, with an
-  Alfred workflow and a terminal version
-- [`worldclock/`](worldclock) — menu bar clock showing your local time next to
-  Amsterdam time
+- [jiggle](jiggle) moves the mouse now and then so the Mac doesn't go idle.
+- [worldclock](worldclock) puts my time and Amsterdam time in the menu bar.
